@@ -1,0 +1,45 @@
+<!-- pages/food/food.wxml -->
+<view class="container">
+  <!-- Header -->
+  <view class="header">
+    <text class="header-title">{{isSpinning ? '选择中...' : '今日推荐'}}</text>
+    <view class="dice-wrapper" bindtap="spin" class="{{isSpinning ? 'spinning' : ''}}">
+      <text class="dice">🎲</text>
+    </view>
+  </view>
+
+  <!-- Result Card -->
+  <view class="result-card {{showResult ? 'show' : ''}}">
+    <view class="food-emoji">{{currentFood.emoji}}</view>
+    <view class="food-name">{{currentFood.name}}</view>
+    <view class="food-category">{{currentFood.category}}</view>
+    <view class="food-tags">
+      <text class="tag" wx:for="{{currentFood.tags}}" wx:key="index">{{item}}</text>
+    </view>
+    <view class="food-desc">{{currentFood.description}}</view>
+  </view>
+
+  <!-- Action Buttons -->
+  <view class="action-area">
+    <button class="btn-primary" bindtap="spin" disabled="{{isSpinning}}">
+      {{isSpinning ? '选择中...' : '🔄 换一批'}}
+    </button>
+
+    <button class="btn-secondary" bindtap="goBack">
+      ← 返回首页
+    </button>
+  </view>
+
+  <!-- History -->
+  <view class="history-area" wx:if="{{history.length > 0}}">
+    <text class="history-title">历史推荐</text>
+    <scroll-view scroll-x class="history-scroll">
+      <view class="history-list">
+        <view class="history-item" wx:for="{{history}}" wx:key="index">
+          <text class="history-emoji">{{item.emoji}}</text>
+          <text class="history-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
