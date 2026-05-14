@@ -1,0 +1,10 @@
+{
+  "desc": "关于本项目文件的说明",
+  "setting": {
+    "urlCheck": false
+  },
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+}

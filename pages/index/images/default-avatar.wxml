@@ -1,0 +1,12 @@
+<!-- pages/index/images/default-avatar.wxml -->
+<!-- 
+  默认头像占位符
+  使用方法：在 index.js 中将 avatarUrl 改为以下地址，或自行放置头像图片到 images/ 目录
+  
+  <image src="/images/default-avatar.png" />
+  
+  推荐：上传一张 200x200 的圆形头像到 images/default-avatar.png
+-->
+<view style="width:200rpx;height:200rpx;background:#FFE4D6;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+  <text style="font-size:100rpx;">👤</text>
+</view>

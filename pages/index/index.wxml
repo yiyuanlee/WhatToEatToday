@@ -1,0 +1,45 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- Logo / Emoji -->
+  <view class="logo-area">
+    <text class="logo-emoji">🍜</text>
+    <text class="logo-text">今天吃什么</text>
+    <text class="logo-subtitle">选择困难症的救星</text>
+  </view>
+
+  <!-- Avatar Section -->
+  <view class="avatar-section card">
+    <view class="avatar-wrapper" bindtap="chooseAvatar">
+      <view class="avatar-img" wx:if="{{useEmojiAvatar}}">👤</view>
+      <image class="avatar-img" wx:else src="{{avatarUrl}}" mode="aspectFill" />
+      <view class="avatar-edit">编辑</view>
+    </view>
+    <view class="nickname-section">
+      <input 
+        class="nickname-input" 
+        placeholder="点击输入昵称" 
+        placeholder-class="nickname-placeholder"
+        value="{{nickname}}"
+        bindinput="onNicknameInput"
+        maxlength="20"
+      />
+    </view>
+  </view>
+
+  <!-- Action Buttons -->
+  <view class="action-area">
+    <button class="btn-primary" bindtap="goToRecommend" hover-class="btn-hover">
+      🎲 开始随机推荐
+    </button>
+
+    <view class="user-greeting" wx:if="{{nickname}}">
+      <text class="greeting-text">{{greetingText}}，{{nickname}}！</text>
+    </view>
+  </view>
+
+  <!-- Tips -->
+  <view class="tips-area">
+    <text class="tips-label">💡 今日小贴士</text>
+    <text class="tips-text">{{dailyTip}}</text>
+  </view>
+</view>
