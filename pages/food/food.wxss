@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 50rpx;
+  margin-bottom: 40rpx;
 }
 
 .header-title {
@@ -47,6 +47,38 @@
 
 .spinning .dice {
   animation: spin 0.5s linear infinite;
+}
+
+/* Filter Scroll */
+.filter-scroll {
+  width: 100%;
+  margin-bottom: 30rpx;
+  white-space: nowrap;
+}
+
+.filter-list {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 4rpx 0;
+}
+
+.filter-pill {
+  display: inline-block;
+  padding: 14rpx 32rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  color: #666;
+  background: #FFF;
+  border: 2rpx solid #FFE4D6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filter-pill.active {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: #FFF;
+  border-color: #FF6B35;
+  font-weight: 600;
 }
 
 /* Result Card */

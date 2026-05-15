@@ -1,9 +1,24 @@
 <!-- pages/food/food.wxml -->
 <view class="container">
+  <!-- Filter Pills -->
+  <scroll-view scroll-x class="filter-scroll" enhanced show-scrollbar="false">
+    <view class="filter-list">
+      <view
+        wx:for="{{filters}}"
+        wx:key="index"
+        class="filter-pill {{activeFilter === item ? 'active' : ''}}"
+        data-filter="{{item}}"
+        bindtap="onFilterTap"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
   <!-- Header -->
   <view class="header">
     <text class="header-title">{{isSpinning ? '选择中...' : '今日推荐'}}</text>
-    <view class="dice-wrapper" bindtap="spin" class="{{isSpinning ? 'spinning' : ''}}">
+    <view class="dice-wrapper {{isSpinning ? 'spinning' : ''}}" bindtap="spin">
       <text class="dice">🎲</text>
     </view>
   </view>
