@@ -85,4 +85,36 @@ describe('recommend', () => {
       expect(result.item.workoutFriendly).toBe(true)
     }
   })
+
+  it('有食材输入时结果受食材影响', () => {
+    const withEggs = recommend(
+      { ...baseInput, ingredients: ['鸡蛋', '面条', '番茄'] },
+      [],
+      () => 0,
+    )
+    const withShrimp = recommend(
+      { ...baseInput, ingredients: ['虾仁', '米饭'] },
+      [],
+      () => 0,
+    )
+
+    expect(withEggs.kind).toBe('home')
+    expect(withShrimp.kind).toBe('home')
+    if (withEggs.kind === 'home' && withShrimp.kind === 'home') {
+      expect(withEggs.item.id).not.toBe(withShrimp.item.id)
+    }
+  })
+
+  it('模糊匹配别名可以正确识别食材', () => {
+    const result = recommend(
+      { ...baseInput, ingredients: ['西红柿', '蛋', '米'] },
+      [],
+      () => 0,
+    )
+
+    expect(result.kind).toBe('home')
+    if (result.kind === 'home') {
+      expect(result.matchedIngredients.length).toBeGreaterThan(0)
+    }
+  })
 })

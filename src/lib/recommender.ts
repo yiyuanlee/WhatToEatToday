@@ -47,17 +47,42 @@ const areaOrder: StoreArea[] = ['蔬果区', '肉蛋奶区', '主食干货区', 
 const aliases: Record<string, string> = {
   米: '米饭',
   大米: '米饭',
+  白米: '米饭',
+  白米饭: '米饭',
   鸡肉: '鸡胸肉',
   鸡胸: '鸡胸肉',
   西红柿: '番茄',
   蛋: '鸡蛋',
+  蛋类: '鸡蛋',
   鲜虾: '虾仁',
+  虾: '虾仁',
+  大虾: '虾仁',
   香菇: '蘑菇',
+  菌菇: '蘑菇',
+  平菇: '蘑菇',
+  杏鲍菇: '蘑菇',
+  意大利面: '意面',
+  牛腩: '牛肉',
+  牛排: '牛肉',
+  肥牛卷: '肥牛',
+  花菜: '西兰花',
+  花椰菜: '西兰花',
+  马铃薯: '土豆',
+  红萝卜: '胡萝卜',
 }
 
 export function normalizeIngredient(value: string) {
   const normalized = value.trim().toLowerCase().replace(/\s+/g, '')
   return aliases[normalized] ?? normalized
+}
+
+function fuzzyIngredientMatch(recipeIngName: string, inventorySet: Set<string>): boolean {
+  const normalized = normalizeIngredient(recipeIngName)
+  if (inventorySet.has(normalized)) return true
+  for (const inv of inventorySet) {
+    if (normalized.includes(inv) || inv.includes(normalized)) return true
+  }
+  return false
 }
 
 function recipeMatchesInventory(recipe: Recipe, inventory: Set<string>) {
@@ -68,8 +93,7 @@ function recipeMatchesInventory(recipe: Recipe, inventory: Set<string>) {
   for (const ingredient of recipe.ingredients) {
     const weight = ingredient.essential ? 2 : 1
     totalWeight += weight
-    const normalized = normalizeIngredient(ingredient.name)
-    if (inventory.has(normalized)) {
+    if (fuzzyIngredientMatch(ingredient.name, inventory)) {
       matchedWeight += weight
       matchedIngredients.push(ingredient.name)
     }
@@ -91,10 +115,10 @@ function filteredRecipes(input: RecommendInput) {
 
 function recipePreferenceScore(recipe: Recipe, input: RecommendInput) {
   let score = 0
-  if (input.cuisine !== '不限' && recipe.cuisine === input.cuisine) score += 18
-  if (input.goal === 'light' && recipe.tags.includes('减脂')) score += 18
-  if (input.goal === 'highProtein' && recipe.highProtein) score += 18
-  if (input.workout && recipe.highProtein) score += 24
+  if (input.cuisine !== '不限' && recipe.cuisine === input.cuisine) score += 12
+  if (input.goal === 'light' && recipe.tags.includes('减脂')) score += 12
+  if (input.goal === 'highProtein' && recipe.highProtein) score += 12
+  if (input.workout && recipe.highProtein) score += 15
   return score
 }
 
@@ -133,20 +157,22 @@ function recommendHome(
   random: () => number,
 ): HomeRecommendation {
   const inventory = new Set(input.ingredients.map(normalizeIngredient).filter(Boolean))
+  const hasInventory = inventory.size > 0
   const scarceInventory = inventory.size < 2
+  const inventoryWeight = hasInventory ? 120 : 0
   const ranked = filteredRecipes(input)
     .map((recipe) => {
       const inventoryResult = recipeMatchesInventory(recipe, inventory)
       return {
         recipe,
         inventoryResult,
-        score: inventoryResult.ratio * 70 + recipePreferenceScore(recipe, input),
+        score: inventoryResult.ratio * inventoryWeight + recipePreferenceScore(recipe, input),
       }
     })
     .sort((a, b) => b.score - a.score)
 
   const topScore = ranked[0]?.score ?? 0
-  const competitive = ranked.filter((entry) => entry.score >= topScore - 16).slice(0, 4)
+  const competitive = ranked.filter((entry) => entry.score >= topScore - 30).slice(0, 6)
   const chosen = chooseWithoutRecent(
     competitive.map((entry) => ({ id: entry.recipe.id, entry })),
     history,
@@ -156,9 +182,11 @@ function recommendHome(
   const shoppingGroups = buildShoppingGroups(chosen.recipe, input.ingredients, scarceInventory)
 
   let reason = '根据你的口味与时间，今天就做这道吧。'
-  if (matchPercent >= 65) {
+  if (hasInventory && matchPercent >= 65) {
     reason = `库存匹配度很高，优先消耗 ${chosen.inventoryResult.matchedIngredients.slice(0, 3).join('、')}。`
-  } else if (scarceInventory) {
+  } else if (hasInventory && matchPercent >= 30) {
+    reason = `冰箱里的 ${chosen.inventoryResult.matchedIngredients.slice(0, 2).join('、')} 正好能用上，再补几样就齐了。`
+  } else if (scarceInventory && hasInventory) {
     reason = '现有食材较少，已先定下核心菜谱，只列必买主料，避免越买越多。'
   } else if (input.workout && chosen.recipe.highProtein) {
     reason = '已避开油炸与高糖，并优先安排了高蛋白搭配。'

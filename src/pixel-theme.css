@@ -1115,8 +1115,13 @@ footer {
 
 @media (max-width: 620px) {
   .app-shell {
+    overflow-x: hidden;
     background:
       linear-gradient(180deg, #78bed2 0 146px, #8cc45a 146px 164px, #6ca448 164px 188px, #d7b76f 188px 100%);
+  }
+
+  .app-shell::before {
+    display: none;
   }
 
   .site-header,
@@ -1134,41 +1139,256 @@ footer {
 
   .planner-card,
   .result-card {
-    padding: 26px 21px 30px;
+    padding: 22px 16px 26px;
     border-radius: 0;
     box-shadow:
       0 0 0 3px var(--pixel-brown-dark),
       0 0 0 6px var(--pixel-wood),
-      inset 0 0 0 3px var(--pixel-paper-light),
-      8px 8px 0 rgba(67, 45, 36, 0.25);
+      inset 0 0 0 3px var(--pixel-paper-light);
+  }
+
+  .empty-result {
+    min-height: 320px;
+    padding: 30px 20px;
+    box-shadow:
+      0 0 0 3px var(--pixel-brown-dark),
+      0 0 0 6px var(--pixel-wood),
+      inset 0 0 0 3px var(--pixel-paper-light);
   }
 
   .planner-heading {
-    padding-inline: 14px;
+    padding: 12px 12px 20px;
   }
 
   .planner-heading h1 {
-    font-size: 43px;
+    font-size: 36px;
+  }
+
+  .planner-heading > p:last-child {
+    font-size: 13px;
+  }
+
+  .form-section legend {
+    font-size: 16px;
   }
 
   .choice-grid {
-    gap: 14px;
+    gap: 12px;
+  }
+
+  .choice-card {
+    min-height: 80px;
+    padding: 12px;
+    grid-template-columns: 42px 1fr;
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      inset 0 0 0 2px #fff0bd,
+      3px 3px 0 #9a673e;
+  }
+
+  .choice-card.active {
+    box-shadow:
+      0 0 0 2px #29482a,
+      inset 0 0 0 2px #d5ec8c,
+      3px 3px 0 #426530;
+  }
+
+  .choice-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .choice-card strong {
+    font-size: 14px;
+  }
+
+  .choice-card small {
+    font-size: 10px;
   }
 
   .scene-tabs {
-    gap: 9px;
+    gap: 8px;
+  }
+
+  .scene-tabs button {
+    font-size: 13px;
   }
 
   .pill-row {
-    gap: 9px;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 7px 11px;
+    font-size: 11px;
+  }
+
+  .segmented-control {
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      inset 0 0 0 2px #e0ab68,
+      3px 3px 0 rgba(67, 45, 36, 0.24);
+  }
+
+  .segmented-control button {
+    min-height: 60px;
+  }
+
+  .segmented-control b {
+    font-size: 14px;
+  }
+
+  .submit-button {
+    min-height: 56px;
+    font-size: 17px;
+    box-shadow:
+      0 0 0 3px var(--pixel-green-dark),
+      inset 0 0 0 2px #82ae4b,
+      inset 0 -5px 0 #315b30,
+      5px 5px 0 rgba(66, 44, 31, 0.28);
   }
 
   .nutrition-block {
-    padding: 15px 11px;
+    grid-template-columns: 1fr;
+    padding: 14px 12px;
+    gap: 12px;
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      inset 0 0 0 2px #fff0bd,
+      3px 3px 0 #b47b48;
+  }
+
+  .nutrition-ring {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+  }
+
+  .ring-center {
+    width: 64px;
+    height: 64px;
+  }
+
+  .ring-center strong {
+    font-size: 20px;
+  }
+
+  .result-header {
+    padding-right: 28px;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+  }
+
+  .dish-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+    box-shadow:
+      0 0 0 3px var(--pixel-brown-dark),
+      inset 0 0 0 3px #ffeab0,
+      4px 4px 0 #a96e3f;
+  }
+
+  .result-header h2 {
+    font-size: 24px;
   }
 
   .result-ribbon {
-    right: 18px;
+    right: 14px;
+    padding: 8px 10px 14px;
+    font-size: 9px;
+  }
+
+  .reason-note {
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
+  .timeline-step {
+    padding: 10px;
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      inset 0 0 0 2px #ffedb5,
+      3px 3px 0 #a97143;
+  }
+
+  .timeline-step b {
+    font-size: 12px;
+  }
+
+  .shopping-group {
+    padding: 10px;
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      inset 0 0 0 2px #fff6cc,
+      3px 3px 0 #b17945;
+  }
+
+  .refresh-button {
+    min-height: 50px;
+    font-size: 15px;
+    box-shadow:
+      0 0 0 3px #6e3028,
+      inset 0 0 0 2px #e27652,
+      inset 0 -4px 0 #8f382d,
+      4px 4px 0 rgba(67, 45, 36, 0.26);
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header,
+  .page-grid {
+    width: calc(100% - 20px);
+  }
+
+  .planner-card,
+  .result-card {
+    padding: 16px 12px 20px;
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      0 0 0 4px var(--pixel-wood),
+      inset 0 0 0 2px var(--pixel-paper-light);
+  }
+
+  .empty-result {
+    box-shadow:
+      0 0 0 2px var(--pixel-brown-dark),
+      0 0 0 4px var(--pixel-wood),
+      inset 0 0 0 2px var(--pixel-paper-light);
+  }
+
+  .brand {
+    font-size: 16px;
+    padding: 8px 14px 8px 8px;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  .planner-heading h1 {
+    font-size: 30px;
+  }
+
+  .result-header h2 {
+    font-size: 20px;
+  }
+
+  .nutrition-ring {
+    width: 100px;
+    height: 100px;
+  }
+
+  .ring-center {
+    width: 54px;
+    height: 54px;
+  }
+
+  .ring-center strong {
+    font-size: 17px;
   }
 }
 

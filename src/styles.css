@@ -849,7 +849,7 @@
 }
 
 .timeline-step {
-  min-width: 115px;
+  min-width: 0;
   padding: 12px;
   display: flex;
   gap: 9px;
@@ -1136,14 +1136,15 @@ footer {
   }
 
   .nutrition-block {
-    grid-template-columns: 128px 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 14px;
     padding: 13px;
   }
 
   .nutrition-ring {
     width: 128px;
     height: 128px;
+    margin: 0 auto;
   }
 
   .timeline-track {
@@ -1162,6 +1163,53 @@ footer {
 
   .shopping-groups {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .site-header,
+  .page-grid {
+    width: calc(100% - 16px);
+  }
+
+  .planner-card,
+  .result-card {
+    padding: 18px 14px 22px;
+  }
+
+  .planner-heading h1 {
+    font-size: 34px;
+  }
+
+  .choice-card {
+    grid-template-columns: 36px 1fr;
+    gap: 8px;
+  }
+
+  .choice-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .result-header {
+    grid-template-columns: 48px 1fr;
+    gap: 10px;
+  }
+
+  .dish-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .result-header h2 {
+    font-size: 22px;
+  }
+
+  .nutrition-ring {
+    width: 110px;
+    height: 110px;
   }
 }
 
