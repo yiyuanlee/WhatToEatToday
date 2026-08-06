@@ -117,4 +117,18 @@ describe('recommend', () => {
       expect(result.matchedIngredients.length).toBeGreaterThan(0)
     }
   })
+
+  it('英文食材名可以正确匹配', () => {
+    const result = recommend(
+      { ...baseInput, ingredients: ['tomato', 'egg', 'rice', 'scallion', 'soy sauce'] },
+      [],
+      () => 0,
+    )
+
+    expect(result.kind).toBe('home')
+    if (result.kind === 'home') {
+      expect(result.item.id).toBe('tomato-egg-rice')
+      expect(result.matchPercent).toBe(100)
+    }
+  })
 })

@@ -9,6 +9,7 @@ import {
   type Scene,
   type StoreArea,
 } from '../data/recipes'
+import { diningCopy, englishIngredientAliases, ingredientLabels } from '../i18n/content'
 
 export interface RecommendInput {
   workout: boolean
@@ -25,19 +26,30 @@ export interface ShoppingGroup {
   items: Ingredient[]
 }
 
+export type ReasonCode =
+  | 'default'
+  | 'highMatch'
+  | 'partialMatch'
+  | 'scarce'
+  | 'workout'
+  | 'outWorkout'
+  | 'outDefault'
+
 export interface HomeRecommendation {
   kind: 'home'
   item: Recipe
   matchPercent: number
   matchedIngredients: string[]
   shoppingGroups: ShoppingGroup[]
-  reason: string
+  reasonCode: ReasonCode
+  reasonItems: string[]
 }
 
 export interface OutRecommendation {
   kind: 'out'
   item: DiningCategory
-  reason: string
+  reasonCode: ReasonCode
+  reasonItems: string[]
 }
 
 export type Recommendation = HomeRecommendation | OutRecommendation
@@ -69,6 +81,18 @@ const aliases: Record<string, string> = {
   花椰菜: '西兰花',
   马铃薯: '土豆',
   红萝卜: '胡萝卜',
+  ...Object.fromEntries(
+    Object.entries(englishIngredientAliases).map(([key, value]) => [
+      key.toLowerCase().replace(/\s+/g, ''),
+      value,
+    ]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(ingredientLabels.en).map(([zh, en]) => [
+      en.toLowerCase().replace(/\s+/g, ''),
+      zh,
+    ]),
+  ),
 }
 
 export function normalizeIngredient(value: string) {
@@ -181,15 +205,18 @@ function recommendHome(
   const matchPercent = Math.round(chosen.inventoryResult.ratio * 100)
   const shoppingGroups = buildShoppingGroups(chosen.recipe, input.ingredients, scarceInventory)
 
-  let reason = '根据你的口味与时间，今天就做这道吧。'
+  let reasonCode: ReasonCode = 'default'
+  let reasonItems: string[] = []
   if (hasInventory && matchPercent >= 65) {
-    reason = `库存匹配度很高，优先消耗 ${chosen.inventoryResult.matchedIngredients.slice(0, 3).join('、')}。`
+    reasonCode = 'highMatch'
+    reasonItems = chosen.inventoryResult.matchedIngredients.slice(0, 3)
   } else if (hasInventory && matchPercent >= 30) {
-    reason = `冰箱里的 ${chosen.inventoryResult.matchedIngredients.slice(0, 2).join('、')} 正好能用上，再补几样就齐了。`
+    reasonCode = 'partialMatch'
+    reasonItems = chosen.inventoryResult.matchedIngredients.slice(0, 2)
   } else if (scarceInventory && hasInventory) {
-    reason = '现有食材较少，已先定下核心菜谱，只列必买主料，避免越买越多。'
+    reasonCode = 'scarce'
   } else if (input.workout && chosen.recipe.highProtein) {
-    reason = '已避开油炸与高糖，并优先安排了高蛋白搭配。'
+    reasonCode = 'workout'
   }
 
   return {
@@ -198,7 +225,8 @@ function recommendHome(
     matchPercent,
     matchedIngredients: chosen.inventoryResult.matchedIngredients,
     shoppingGroups,
-    reason,
+    reasonCode,
+    reasonItems,
   }
 }
 
@@ -215,11 +243,17 @@ function recommendOut(
   })
 
   if (preference) {
-    const preferred = candidates.filter(
-      (category) =>
+    const preferred = candidates.filter((category) => {
+      const zhHit =
         category.name.toLowerCase().includes(preference) ||
-        category.keywords.some((keyword) => keyword.toLowerCase().includes(preference)),
-    )
+        category.keywords.some((keyword) => keyword.toLowerCase().includes(preference))
+      const en = diningCopy[category.id]
+      const enHit = en
+        ? en.name.en.toLowerCase().includes(preference) ||
+          en.keywords.en.some((keyword) => keyword.toLowerCase().includes(preference))
+        : false
+      return zhHit || enHit
+    })
     if (preferred.length > 0) candidates = preferred
   }
 
@@ -227,9 +261,8 @@ function recommendOut(
   return {
     kind: 'out',
     item,
-    reason: input.workout
-      ? '已过滤偏油腻品类，优先选择蛋白质更充足、容易控制搭配的一餐。'
-      : '按你的用餐节奏随机抽到这个品类，打开附近平台搜一搜吧。',
+    reasonCode: input.workout ? 'outWorkout' : 'outDefault',
+    reasonItems: [],
   }
 }
 

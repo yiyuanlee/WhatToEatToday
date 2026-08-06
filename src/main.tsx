@@ -3,9 +3,12 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource/fusion-pixel-12px-proportional-sc'
 import './index.css'
 import App from './App.tsx'
+import { LocaleProvider } from './i18n/LocaleContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <LocaleProvider>
+      <App />
+    </LocaleProvider>
   </StrictMode>,
 )

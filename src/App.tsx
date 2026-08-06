@@ -7,8 +7,10 @@ import {
   type Goal,
   type Scene,
 } from './data/recipes'
+import { useLocale } from './i18n/LocaleContext'
 import { readHistory, rememberRecommendation } from './lib/history'
 import {
+  normalizeIngredient,
   recommend,
   type RecommendInput,
   type Recommendation,
@@ -27,6 +29,13 @@ const initialInput: RecommendInput = {
 }
 
 function App() {
+  const {
+    locale,
+    setLocale,
+    t,
+    labelIngredient,
+    labelCuisine,
+  } = useLocale()
   const [form, setForm] = useState<RecommendInput>(initialInput)
   const [ingredientDraft, setIngredientDraft] = useState('')
   const [result, setResult] = useState<Recommendation | null>(null)
@@ -39,7 +48,7 @@ function App() {
   const addIngredient = (value = ingredientDraft) => {
     const entries = value
       .split(/[,，、]/)
-      .map((entry) => entry.trim())
+      .map((entry) => normalizeIngredient(entry.trim()))
       .filter(Boolean)
 
     if (entries.length === 0) return
@@ -72,15 +81,14 @@ function App() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nextInput = ingredientDraft.trim()
+    const draftEntries = ingredientDraft
+      .split(/[,，、]/)
+      .map((item) => normalizeIngredient(item.trim()))
+      .filter(Boolean)
+    const nextInput = draftEntries.length
       ? {
           ...form,
-          ingredients: [
-            ...new Set([
-              ...form.ingredients,
-              ...ingredientDraft.split(/[,，、]/).map((item) => item.trim()).filter(Boolean),
-            ]),
-          ],
+          ingredients: [...new Set([...form.ingredients, ...draftEntries])],
         }
       : form
 
@@ -103,40 +111,60 @@ function App() {
       </div>
 
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="回到页面顶部">
+        <a className="brand" href="#top" aria-label={t.brandAria}>
           <span className="brand-mark" aria-hidden="true">🌱</span>
-          <span>小宝想吃啥</span>
+          <span>{t.brand}</span>
         </a>
-        <p>把今天的选择困难，交给农场小厨房</p>
+        <div className="header-tools">
+          <p className="header-tagline">{t.tagline}</p>
+          <div className="lang-switch" role="group" aria-label={t.langAria}>
+            <button
+              type="button"
+              className={locale === 'zh' ? 'active' : ''}
+              onClick={() => setLocale('zh')}
+              aria-pressed={locale === 'zh'}
+            >
+              {t.langZh}
+            </button>
+            <button
+              type="button"
+              className={locale === 'en' ? 'active' : ''}
+              onClick={() => setLocale('en')}
+              aria-pressed={locale === 'en'}
+            >
+              {t.langEn}
+            </button>
+          </div>
+        </div>
       </header>
 
       <main id="top" className="page-grid">
         <section className="planner-card">
           <div className="planner-heading">
-            <p className="eyebrow">TODAY'S MENU</p>
-            <h1>今天吃什么？</h1>
-            <p>告诉我三个小条件，马上为你翻开今日菜单。</p>
+            <p className="eyebrow">{t.eyebrow}</p>
+            <h1>{t.heading}</h1>
+            <p>{t.subheading}</p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <fieldset className="form-section">
               <legend>
                 <span className="step-number">01</span>
-                今天健身吗？
+                {t.stepWorkout}
               </legend>
               <div className="choice-grid two-columns">
                 <ChoiceButton
                   active={form.workout}
                   icon="🏋️"
-                  title="是，练了！"
-                  subtitle="过滤油炸高糖，优选高蛋白"
+                  title={t.workoutYes}
+                  subtitle={t.workoutYesSub}
                   onClick={() => updateForm('workout', true)}
                 />
                 <ChoiceButton
                   active={!form.workout}
                   icon="🌿"
-                  title="今天休息"
-                  subtitle="轻松一点，快乐最重要"
+                  title={t.workoutNo}
+                  subtitle={t.workoutNoSub}
                   onClick={() => updateForm('workout', false)}
                 />
               </div>
@@ -145,22 +173,22 @@ function App() {
             <fieldset className="form-section">
               <legend>
                 <span className="step-number">02</span>
-                留给吃饭多少时间？
+                {t.stepDuration}
               </legend>
               <div className="segmented-control">
                 <SegmentButton
                   active={form.duration === 'quick'}
                   onClick={() => updateForm('duration', 'quick' as Duration)}
                   icon="⚡"
-                  label="快速解决"
-                  detail="25 分钟内"
+                  label={t.durationQuick}
+                  detail={t.durationQuickDetail}
                 />
                 <SegmentButton
                   active={form.duration === 'full'}
                   onClick={() => updateForm('duration', 'full' as Duration)}
                   icon="🕰️"
-                  label="时间充足"
-                  detail="慢慢做好吃的"
+                  label={t.durationFull}
+                  detail={t.durationFullDetail}
                 />
               </div>
             </fieldset>
@@ -168,7 +196,7 @@ function App() {
             <fieldset className="form-section">
               <legend>
                 <span className="step-number">03</span>
-                在哪儿吃？
+                {t.stepScene}
               </legend>
               <div className="scene-tabs">
                 <button
@@ -176,21 +204,21 @@ function App() {
                   className={form.scene === 'home' ? 'active' : ''}
                   onClick={() => updateForm('scene', 'home' as Scene)}
                 >
-                  🏡 在家下厨
+                  {t.sceneHome}
                 </button>
                 <button
                   type="button"
                   className={form.scene === 'out' ? 'active' : ''}
                   onClick={() => updateForm('scene', 'out' as Scene)}
                 >
-                  🚲 外出觅食
+                  {t.sceneOut}
                 </button>
               </div>
 
               {form.scene === 'home' ? (
                 <div className="home-options">
                   <div className="field-group">
-                    <label>想吃哪个菜系？</label>
+                    <label>{t.cuisineLabel}</label>
                     <div className="pill-row">
                       {cuisines.map((cuisine) => (
                         <button
@@ -199,20 +227,22 @@ function App() {
                           className={form.cuisine === cuisine ? 'pill active' : 'pill'}
                           onClick={() => updateForm('cuisine', cuisine)}
                         >
-                          {cuisine}
+                          {labelCuisine(cuisine)}
                         </button>
                       ))}
                     </div>
                   </div>
 
                   <div className="field-group">
-                    <label>今天的饮食目标</label>
+                    <label>{t.goalLabel}</label>
                     <div className="pill-row">
-                      {[
-                        ['all', '随心吃'],
-                        ['light', '🥬 减脂'],
-                        ['highProtein', '💪 高蛋白'],
-                      ].map(([value, label]) => (
+                      {(
+                        [
+                          ['all', t.goalAll],
+                          ['light', t.goalLight],
+                          ['highProtein', t.goalProtein],
+                        ] as const
+                      ).map(([value, label]) => (
                         <button
                           key={value}
                           type="button"
@@ -226,33 +256,33 @@ function App() {
                   </div>
 
                   <div className="field-group">
-                    <label htmlFor="ingredients">冰箱里有什么？</label>
+                    <label htmlFor="ingredients">{t.ingredientsLabel}</label>
                     <div className="ingredient-input">
                       <input
                         id="ingredients"
                         value={ingredientDraft}
                         onChange={(event) => setIngredientDraft(event.target.value)}
                         onKeyDown={handleIngredientKeyDown}
-                        placeholder="例如：鸡蛋、番茄、米饭"
+                        placeholder={t.ingredientsPlaceholder}
                       />
-                      <button type="button" onClick={() => addIngredient()}>添加</button>
+                      <button type="button" onClick={() => addIngredient()}>{t.add}</button>
                     </div>
                     {form.ingredients.length > 0 ? (
-                      <div className="ingredient-chips" aria-label="已添加食材">
+                      <div className="ingredient-chips" aria-label={t.ingredientsLabel}>
                         {form.ingredients.map((ingredient) => (
                           <button
                             type="button"
                             key={ingredient}
                             onClick={() => removeIngredient(ingredient)}
-                            aria-label={`移除 ${ingredient}`}
+                            aria-label={t.removeIngredient(labelIngredient(ingredient))}
                           >
-                            {ingredient}<span>×</span>
+                            {labelIngredient(ingredient)}<span>×</span>
                           </button>
                         ))}
                       </div>
                     ) : null}
                     <div className="suggestions">
-                      <span>常见：</span>
+                      <span>{t.common}</span>
                       {ingredientSuggestions.slice(0, 6).map((ingredient) => (
                         <button
                           type="button"
@@ -260,7 +290,7 @@ function App() {
                           disabled={form.ingredients.includes(ingredient)}
                           onClick={() => addIngredient(ingredient)}
                         >
-                          + {ingredient}
+                          + {labelIngredient(ingredient)}
                         </button>
                       ))}
                     </div>
@@ -268,25 +298,25 @@ function App() {
                 </div>
               ) : (
                 <div className="outside-options">
-                  <label htmlFor="preference">想吃的口味或品类（选填）</label>
+                  <label htmlFor="preference">{t.preferenceLabel}</label>
                   <div className="preference-input">
                     <span aria-hidden="true">🔎</span>
                     <input
                       id="preference"
                       value={form.preference}
                       onChange={(event) => updateForm('preference', event.target.value)}
-                      placeholder="例如：清淡、牛肉、汤粉、日料"
+                      placeholder={t.preferencePlaceholder}
                     />
                   </div>
-                  <p>我们只推荐适合搜索的品类，不读取或虚构附近商家。</p>
+                  <p>{t.preferenceHint}</p>
                 </div>
               )}
             </fieldset>
 
             <button className="submit-button" type="submit">
               <span aria-hidden="true">🍽️</span>
-              帮小宝决定
-              <small>生成今日菜单</small>
+              {t.submit}
+              <small>{t.submitSub}</small>
             </button>
           </form>
         </section>
@@ -300,9 +330,9 @@ function App() {
                 <span className="plate">🍽️</span>
                 <span className="sprout">🌱</span>
               </div>
-              <p className="eyebrow">等待开饭</p>
-              <h2>菜单还是一张白纸</h2>
-              <p>选好左边的条件，今天的答案就会从农场小厨房送来。</p>
+              <p className="eyebrow">{t.emptyEyebrow}</p>
+              <h2>{t.emptyTitle}</h2>
+              <p>{t.emptyCopy}</p>
               <div className="empty-dots" aria-hidden="true"><span /><span /><span /></div>
             </div>
           )}
@@ -311,7 +341,7 @@ function App() {
 
       <footer>
         <span aria-hidden="true">🌾</span>
-        好好吃饭，就是今天最重要的小事
+        {t.footer}
         <span aria-hidden="true">🌾</span>
       </footer>
     </div>

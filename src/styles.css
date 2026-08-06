@@ -103,6 +103,43 @@
   font-weight: 700;
 }
 
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tagline {
+  margin: 0;
+  color: #5c7455;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lang-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(255, 248, 221, 0.7);
+  box-shadow: 0 0 0 2px #426b40;
+}
+
+.lang-switch button {
+  min-width: 36px;
+  padding: 6px 10px;
+  border: 0;
+  color: #5c7455;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.lang-switch button.active {
+  color: #fff8dd;
+  background: #426b40;
+}
+
 .page-grid {
   position: relative;
   z-index: 1;
@@ -1071,7 +1108,8 @@ footer {
     padding-top: 18px;
   }
 
-  .site-header > p {
+  .site-header > p,
+  .header-tagline {
     display: none;
   }
 

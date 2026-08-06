@@ -187,13 +187,32 @@ a:focus-visible {
   font-size: 20px;
 }
 
-.site-header > p {
+.site-header > p,
+.header-tagline {
   padding: 7px 10px;
   color: #254b38;
   background: rgba(225, 245, 202, 0.7);
   box-shadow: 3px 3px 0 rgba(45, 82, 51, 0.28);
   font-size: 12px;
   text-shadow: 1px 1px 0 #d9f2c1;
+}
+
+.lang-switch {
+  background: var(--pixel-paper);
+  box-shadow:
+    0 0 0 3px var(--pixel-brown-dark),
+    inset 0 0 0 2px var(--pixel-paper-light);
+}
+
+.lang-switch button {
+  color: var(--pixel-brown-dark);
+  font-size: 12px;
+}
+
+.lang-switch button.active {
+  color: #fff4c5;
+  background: var(--pixel-wood);
+  text-shadow: 1px 1px 0 var(--pixel-brown-dark);
 }
 
 .page-grid {
@@ -934,6 +953,10 @@ footer {
 }
 
 .site-header > p {
+  font-size: 14px;
+}
+
+.header-tagline {
   font-size: 14px;
 }
 
